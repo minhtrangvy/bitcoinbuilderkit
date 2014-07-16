@@ -21,7 +21,7 @@
       "48": "Builder_48.png"
    },
    // "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsRSX5OPhj0neq3mTkECuavvO4zh/gIjgzrkJSiyrormpz9yxlyCVCr7vU9i5pDnRAR87tASKfIV3hURe4E/T7ArJD27n+/fNUNlK/hTi8H00pYdA9M+onGpwMmahTEMGM3sjT7Twb+VOpGzyuNH1T1J6tx9GNoKK3MI9dxjcFCZv7kqg09GkB0ZnQg2AWKb5zKTNMCkwlLxlw2KPnZCzdnaG66KcH10+Z3NOC3Mg5+WqHSfFFyyRvZWMa7S/Jh29+/r2j/Lk0w6zgYNZiW3nHUVdD99scoNhg2Ad2Mn7QrjdNLVt98Ne6zVIEhKkTprEnSJqyvku3EqONct6pO2s6wIDAQAB",
-   "manifest_version": 1,
+   "manifest_version": 2,
    "minimum_chrome_version": "16.0.884",
    "name": "BuilderKit",
    "permissions": [ "clipboardWrite", "storage", "\u003Call_urls\u003E" ],

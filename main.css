@@ -3,7 +3,6 @@ body
 	font-family: arial, helvetica;
 	width: 245px;
 	background-color: #EBEBEB;
-	min-height: 325px;
 	position: relative;
 }
 
@@ -210,7 +209,7 @@ input
 	position: relative;
 }
 
-#send:hover, #setInfo:hover, #resetAddress:hover
+#send:hover, #setInfo:hover, #resetAddress:hover, #keyEnter:hover
 {
 	background-color: #076CA5;;
 }
@@ -245,6 +244,19 @@ input
 	color:white;
 }
 
+#keyEnter
+{
+	background-color: #0D88CE;
+	border: 0;
+	padding: 8px;
+	border-radius: 5px;
+	font-size: 12px;
+	width: 60px;
+	height: 36px;
+	line-height: 12px;
+	box-shadow: 1px 1px 3px #AAA;
+	color:white;
+}
 
 #addresses
 {
