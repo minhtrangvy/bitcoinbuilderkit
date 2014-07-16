@@ -11,21 +11,13 @@ rush = window.rush = {
 
     "open": function ()
     {
-        setMsg("hikkkkk");
-
         var manifest = chrome.runtime.getManifest();
 
-        chrome.storage.local.get('key', function (result) {
-            document.getElementById("errorBox").innerHTML = key;
-            this.key = result.key;
-        });
+        this.getAddress();
 
-        // document.getElementById("#errorBox").innerHTML = "hi";
-        // $("#errorBox").show().html('we are here.');
-        //setMsg("hi");
+        this.key = localStorage.getItem('key');
 
         if (!this.key) {
-
             $("#createKey").show();
 
             chrome.storage.local.set({
@@ -33,21 +25,10 @@ rush = window.rush = {
             });
 
             $("#foundKey").hide();
-            // $('#foundTitle').hide();
-            // $('#addresses').hide();
-            // $('#addressBox').hide();
-            // $('#txtAddress').hide();
-            // $('#txtAmount').hide();
-            // $('#foundTitle').hide();
-            // $('#foundTitle').hide();
-            // $('#foundTitle').hide();
-
         } else {
             $('#createKey').hide();
 
             $('#foundKey').show(); 
-            $("#addressTitle").show();
-            $("#balanceBox").show();  
         }
 
         // $("#address").html(this.address);
@@ -76,33 +57,6 @@ rush = window.rush = {
         }
 
     },
-
-    "backup": function ()
-    {
-        backup = {
-            "key": this.key,
-            "address": this.address,
-            "txFee": this.txFee
-        };
-
-        var json = JSON.stringify(backup);
-
-        var blob = new Blob([json],
-        {
-            type: "application/json"
-        });
-        var url = URL.createObjectURL(blob);
-
-        var a = document.createElement('a');
-        a.download = "backup.json";
-        a.href = url;
-        a.textContent = "Download KryptoKit backup file";
-
-        setSettingsMsg("");
-
-        document.getElementById('settingsErrorBox').appendChild(a);
-
-    },
     "help": function ()
     {
         this.openTab("help");
@@ -114,10 +68,6 @@ rush = window.rush = {
         chrome.tabs.create({
           'url':'http://kryptokit.com/getting-started.html' }, function(tab) {
           });
-    },
-    "prepareRestore": function ()
-    {
-        chrome.tabs.create({url: chrome.extension.getURL('restore.html')});
     },
     "check": function ()
     {
@@ -188,6 +138,24 @@ rush = window.rush = {
         // $("#send").attr("disabled", "disabled");
         // $("#send").html("Sending...");
     },
+    "getAddress": function ()
+    {
+        var url = "https://blockchain.info/q/addressbalance/" + this.address;
+
+        $.ajax(
+        {
+            type: "GET",
+            url: url,
+            async: true,
+            data:
+            {}
+
+        }).done(function (msg)
+        {
+
+
+        });
+    },
     "getBalance": function ()
     {
         var url = "https://blockchain.info/q/addressbalance/" + this.address;
@@ -226,7 +194,7 @@ rush = window.rush = {
     },
     "getFiatPrice": function ()
     {
-        currency = this.currency;
+        currency = 'USD';
 
         $.ajax({
             type: "GET",
@@ -272,17 +240,14 @@ rush = window.rush = {
     {
         $("#errorBox").hide();
 
-        chrome.storage.local.set(
-        {
-            'key': "",
-            'address': ""
-        }, function () {});
+        localStorage.setItem('key',"");
+        localStorage.setItem('address', "");
 
         $("#createKey").show();
         $("#foundKey").hide();
+
         this.key = "";
         this.address = "";
-
     },
     // "removePassword": function ()
     // {
@@ -327,17 +292,22 @@ rush = window.rush = {
     "setKey": function ()
     {
         key = $('#txtKey').val();
+        localStorage.setItem('key',key);
 
-        chrome.storage.local.set(
-        {
-            'key': key
-        }, function ()
-        {
-            setMsg("Key has been set succesfully!");
+        setMsg("Key has been set succesfully!");
+        $("#createKey").hide();
+        $("#foundKey").show();
 
-            $("#createKey").hide();
-            $("#foundKey").show();
-        });
+        // chrome.storage.local.set(
+        // {
+        //     'key': key
+        // }, function ()
+        // {
+        //     setMsg("Key has been set succesfully!");
+
+        //     $("#createKey").hide();
+        //     $("#foundKey").show();
+        // });
 
     },
     "openTab": function ( tab )
@@ -377,48 +347,15 @@ rush = window.rush = {
 
         this.txSec = "";
 
-        $("#password").val("");
-
         $("#txtAmount").val("");
         $("#txtAddress").val("");
 
         this.getBalance();
-
     },
     "showSettings": function ()
     {
         $("#showSettings").hide();
         $("#tools").show();
-    },
-    "setCurrency": function()
-    {
-        setSettingsMsg("<div>Select the currency you wish to change to: <br/><select id='currencies'></select> ")
-
-        for ( i in this.currencyOptions )
-        {
-            $("#currencies").append( "<option value='" + this.currencyOptions[i] + "'>" + this.currencyOptions[i] + "</option>" );
-        }
-
-        $("#currencies").val( this.currency );
-    },
-    "setCurrencyConfirm": function ()
-    {
-        currency = $("#currencies").val();
-        this.currency = currency;
-
-        chrome.storage.local.set(
-        {
-            'currency': currency
-        }, function () {
-
-            rush.getFiatPrice();    
-
-        });
-
-        $("#priceSrc").html( currency );
-
-        setSettingsMsg( "Currency succesfully changed!");
-
     },
     "getFiatPrefix": function()
     {
@@ -442,6 +379,8 @@ $(document).ready(function ()
         this.key = data.key;
         this.address = data.address;
     });
+
+    rush.open();
 });
 
 // Date.prototype.format = function (format) //author: meizz

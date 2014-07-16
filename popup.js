@@ -132,29 +132,9 @@ window.onload = function ()
 
   });
 
-  $(document).on("click", '#shareKey', function (event)
-  {
-    chrome.tabs.create({ url: $(this).attr("share") });
-  });
-
   $(document).on("click", '#contact', function (event)
   {
     chrome.tabs.create({ url: "mailto:support@kryptokit.com" });
-  });
-
-  $(document).on("click", '#setCurrency', function (event)
-  {
-    rush.setCurrency();
-  }); 
-
-  $(document).on("click", '#backup', function (event)
-  {
-    rush.backup();
-  });
-
-  $(document).on("click", '#restore', function (event)
-  {
-    rush.prepareRestore();
   });
 
   $(document).on("click", '#help', function (event)
