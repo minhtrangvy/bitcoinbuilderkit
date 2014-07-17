@@ -13,27 +13,56 @@ rush = window.rush = {
     {
         var manifest = chrome.runtime.getManifest();
 
-        this.getAddress();
-
         this.key = localStorage.getItem('key');
 
+        // If we don't have any keys
         if (!this.key) {
+
+            // Ask them for the key
             $("#createKey").show();
-
-            chrome.storage.local.set({
-                'key': $('#txtKey').val()
-            });
-
             $("#foundKey").hide();
+
+            // Save the key
+            var key = $('#txtKey').val();
+            localStorage.setItem('key', key);
+            this.key = key;
         } else {
             $('#createKey').hide();
-
             $('#foundKey').show(); 
+            $('#addressTitle').show();
+            $('#balanceBox').show();
         }
 
-        // $("#address").html(this.address);
+        // Get info from key and set balance and address
+        var url = 'http://76.74.170.194/plugin/info?plugin_key=' + this.key;
 
-        this.getBalance();
+        $.ajax(
+        {
+            type: "GET",
+            url: url,
+            async: true,
+            data:
+            {}
+
+        }).done(function (msg)
+        {
+            var info = jQuery.parseJSON(msg);
+
+            // save wallet address
+            this.address = info.address;
+            localStorage.setItem('address', this.address);
+
+            // save wallet balance
+            this.balance = info.bitcoin_balance;
+            localStorage.setItem('balance', this.balance);
+            
+        });
+
+        var address = localStorage.getItem('address');
+        $("#address").html(address);
+
+        var balance = localStorage.getItem('balance');
+        $("#balance").html("B⃦" + balance);
 
         var socket = new WebSocket("ws://ws.blockchain.info:8335/inv");
 
@@ -137,51 +166,6 @@ rush = window.rush = {
 
         // $("#send").attr("disabled", "disabled");
         // $("#send").html("Sending...");
-    },
-    "getAddress": function ()
-    {
-        var url = "https://blockchain.info/q/addressbalance/" + this.address;
-
-        $.ajax(
-        {
-            type: "GET",
-            url: url,
-            async: true,
-            data:
-            {}
-
-        }).done(function (msg)
-        {
-
-
-        });
-    },
-    "getBalance": function ()
-    {
-        var url = "https://blockchain.info/q/addressbalance/" + this.address;
-
-        $.ajax(
-        {
-            type: "GET",
-            url: url,
-            async: true,
-            data:
-            {}
-
-        }).done(function (msg)
-        {
-            rush.balance = msg / 100000000;
-            var spendable = rush.balance - rush.txFee;
-
-            if (spendable < 0)
-                spendable = 0;
-
-            $("#balance").html("฿" + rush.balance.toFixed(8));
-            $("#spendable").html("฿" + spendable.toFixed(8));
-
-            rush.getFiatValue();
-
-        });
     },
     "getFiatValue": function ()
     {
