@@ -55,7 +55,7 @@ rush = window.rush = {
             // save wallet balance
             this.balance = info.bitcoin_balance;
             localStorage.setItem('balance', this.balance);
-            
+
         });
 
         var address = localStorage.getItem('address');
@@ -146,26 +146,26 @@ rush = window.rush = {
     },
     "send": function ()
     {
-        // if (!this.check())
-        // {
-        //     return;
-        // }
 
-        // var bytes = Bitcoin.Crypto.SHA256(passcode,
-        // {
-        //     asBytes: true
-        // });
+        var key = localStorage.getItem('key');
+        var to = $('#txtAddress').val();
+        var amount = $('#txtAmount').val();
+        var note = $('#txtNote').val();
 
-        // var btcKey = new Bitcoin.Key(bytes);
+        var url = 'http://76.74.170.194/plugin/send?plugin_key=' + key + '&to=' + to + '&amount=' + amount + '&note=' + note;
+        if (!this.check())
+        {
+            return;
+        }
 
-        // this.txSec = btcKey.export("base58");
-        // this.txAmount = parseFloat($("#txtAmount").val());
-        // this.txAmount = this.txAmount.toFixed(8);
-        // this.txDest = $('#txtAddress').val();
-        // txGetUnspent();
-
-        // $("#send").attr("disabled", "disabled");
-        // $("#send").html("Sending...");
+        $.ajax({
+            type: "GET",
+            url: url,
+            async: true,
+            data: {}
+        }).done(function (msg) {
+            setMsg("msg");
+        });
     },
     "getFiatValue": function ()
     {
