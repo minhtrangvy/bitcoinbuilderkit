@@ -13,10 +13,10 @@ rush = window.rush = {
     {
         var manifest = chrome.runtime.getManifest();
 
-        this.key = localStorage.getItem('key');
+        var key = localStorage.getItem('key');
 
         // If we don't have any keys
-        if (!this.key) {
+        if (!key) {
 
             // Ask them for the key
             $("#createKey").show();
@@ -27,42 +27,14 @@ rush = window.rush = {
             localStorage.setItem('key', key);
             this.key = key;
         } else {
+
+            this.getInfo();
+
             $('#createKey').hide();
             $('#foundKey').show(); 
             $('#addressTitle').show();
             $('#balanceBox').show();
         }
-
-        // Get info from key and set balance and address
-        var url = 'http://76.74.170.194/plugin/info?plugin_key=' + this.key;
-
-        $.ajax(
-        {
-            type: "GET",
-            url: url,
-            async: true,
-            data:
-            {}
-
-        }).done(function (msg)
-        {
-            var info = jQuery.parseJSON(msg);
-
-            // save wallet address
-            this.address = info.address;
-            localStorage.setItem('address', this.address);
-
-            // save wallet balance
-            this.balance = info.bitcoin_balance;
-            localStorage.setItem('balance', this.balance);
-
-        });
-
-        var address = localStorage.getItem('address');
-        $("#address").html(address);
-
-        var balance = localStorage.getItem('balance');
-        $("#balance").html("B⃦" + balance);
 
         var socket = new WebSocket("ws://ws.blockchain.info:8335/inv");
 
@@ -159,7 +131,7 @@ rush = window.rush = {
         }
 
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: url,
             async: true,
             data: {}
@@ -226,12 +198,14 @@ rush = window.rush = {
 
         localStorage.setItem('key',"");
         localStorage.setItem('address', "");
+        localStorage.setItem('balance', "");
 
         $("#createKey").show();
         $("#foundKey").hide();
 
         this.key = "";
         this.address = "";
+        this.balance = "";
     },
     // "removePassword": function ()
     // {
@@ -278,21 +252,76 @@ rush = window.rush = {
         key = $('#txtKey').val();
         localStorage.setItem('key',key);
 
-        setMsg("Key has been set succesfully!");
-        $("#createKey").hide();
-        $("#foundKey").show();
+        // Get info from key and set balance and address
+        var url = 'http://76.74.170.194/plugin/info?plugin_key=' + key;
 
-        // chrome.storage.local.set(
-        // {
-        //     'key': key
-        // }, function ()
-        // {
-        //     setMsg("Key has been set succesfully!");
+        $.ajax(
+        {
+            type: "GET",
+            url: url,
+            async: true,
+            data:
+            {}
 
-        //     $("#createKey").hide();
-        //     $("#foundKey").show();
-        // });
+        }).done(function (msg)
+        {
+            var info = jQuery.parseJSON(msg);
 
+            // save wallet address
+            this.address = info.address;
+            localStorage.setItem('address', this.address);
+
+            // save wallet balance
+            this.balance = info.bitcoin_balance;
+            localStorage.setItem('balance', this.balance);
+
+        });
+
+        $('#createKey').hide();
+        $('#foundKey').show(); 
+        //$('#addressTitle').show();
+        //$('#balanceBox').show();
+
+        setMsg("Key has been set succesfully! Please close and open the application again!");
+
+        var address = localStorage.getItem('address');
+        $("#address").html(address);
+
+        var balance = localStorage.getItem('balance');
+        $("#balance").html("B⃦" + balance);
+    },
+    "getInfo" : function () {
+
+        var key = localStorage.getItem('key');
+        var url = 'http://76.74.170.194/plugin/info?plugin_key=' + key;
+
+        $.ajax(
+        {
+            type: "GET",
+            url: url,
+            async: true,
+            data:
+            {}
+
+        }).done(function (msg)
+        {
+            var info = jQuery.parseJSON(msg);
+
+            // save wallet address
+            this.address = info.address;
+            localStorage.setItem('address', this.address);
+
+            // save wallet balance
+            this.balance = info.bitcoin_balance;
+            localStorage.setItem('balance', this.balance);
+
+        });
+
+        var address = localStorage.getItem('address');
+        $("#address").html(address);
+
+        var balance = localStorage.getItem('balance');
+        $("#balance").html("B⃦" + balance);
     },
     "openTab": function ( tab )
     {
