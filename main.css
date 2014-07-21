@@ -230,7 +230,7 @@ input
 	box-shadow: 1px 1px 3px #AAA;
 }
 
-#send, #setInfo
+#send, #setInfo, #validate
 {
 	background-color: #0D88CE;
 	border: 0;
@@ -242,6 +242,7 @@ input
 	line-height: 12px;
 	box-shadow: 1px 1px 3px #AAA;
 	color:white;
+	display: inline-block;
 }
 
 #keyEnter
@@ -276,6 +277,7 @@ input
 	margin-top: 10px;
 	box-shadow: 1px 1px 3px #AAA;
 	border:0;
+	display: inline-block;
 }
 
 .settings

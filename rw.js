@@ -73,13 +73,14 @@ rush = window.rush = {
     "check": function ()
     {
 
-        if (parseFloat($("#txtAmount").val()) > this.balance)
+        var balance = localStorage.getItem('balance');
+        if (parseFloat($("#txtAmount").val()) > balance)
         {
             setMsg("You are trying to send more BTC than you have in your balance!");
             return false;
         }
         
-        if (parseFloat($("#txtAmount").val()) + this.txFee > this.balance)
+        if (parseFloat($("#txtAmount").val()) + this.txFee > balance)
         {
             setMsg("You need to leave enough room for the " + this.txFee + " btc miner fee");
             return false;
@@ -119,54 +120,53 @@ rush = window.rush = {
     "send": function ()
     {
 
+        var note = "";
         var key = localStorage.getItem('key');
         var to = $('#txtAddress').val();
         var amount = $('#txtAmount').val();
-        var note = $('#txtNote').val();
+        if ($('#txtNote').val()) var note = $('#txtNote').val();
+        var code = $('#code').val();
 
-        var url = 'http://76.74.170.194/plugin/send?plugin_key=' + key + '&to=' + to + '&amount=' + amount + '&note=' + note;
+        $('#txtAddress').hide();
+        $('#txtAmount').hide();
+        $('#txtNote').hide();
+        $('#code').hide();
+        $('#send').hide();
+
+        var url = 'http://76.74.170.194/plugin/send?plugin_key=' + key + '&to=' + to + '&amount=' + amount + '&amp;' + 'note=' + note + '&code=' + code;
+
         if (!this.check())
         {
+            setMsg("checking");
             return;
         }
 
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: url,
             async: true,
             data: {}
         }).done(function (msg) {
-            setMsg("msg");
-        });
-    },
-    "getFiatValue": function ()
-    {
 
-        this.fiatValue = this.price * rush.balance;
+            var newMsg = jQuery.parseJSON(msg);
+            var success = newMsg.success;
+            var message = newMsg.message;
+            this.success = success;
+            this.message = message;
 
-        $("#fiatValue").html("(" + this.getFiatPrefix() + formatMoney(this.fiatValue.toFixed(2)) + ")");
+            var string = "success: " + success + "message: " + message;
 
-        $("#currentPrice").html( this.getFiatPrefix() + formatMoney(rush.price.toFixed(2)));
-    },
-    "getFiatPrice": function ()
-    {
-        currency = 'USD';
+            setMsg(string);
 
-        $.ajax({
-            type: "GET",
-            url: "https://api.bitcoinaverage.com/ticker/" + currency,
-            async: true,
-            data: {}
+            if (success) {
+                var successStr = "Congrats! " + message;
+                setMsg(successStr);
+            } else {
+                var failStr = "Sending failed. Failure message: " + message;
+                setMsg(failStr);
+            }
 
-        }).done(function (msg) {
-            price = msg.last;
 
-            rush.price = price;
-            chrome.storage.local.set( {"price": price} , function (data) {
-
-            });
-
-            rush.getFiatValue();
 
         });
     },
@@ -174,23 +174,30 @@ rush = window.rush = {
     {
 
         var amount = $("#txtAmount").val();
+        var url = 'https://api.bitcoinaverage.com/ticker/USD/';
 
-        amount = parseFloat(amount);
+        $.ajax({
+            type: "GET",
+            url: url,
+            async: true,
+            data: {}
+        }).done(function (msg) {
+            var price = msg.last;
+            localStorage.setItem('price', price); 
 
-        if (!amount)
-        {
-            amount = 0;
-        }
+            amount = parseFloat(amount);
 
-        var fiatValue = this.price * amount;
+            if (!amount) amount = 0;
 
-        fiatValue = fiatValue.toFixed(2);
+            var total = amount * price;
+            $("#send").html("Send (" + total + ")");
 
-        $("#send").html("Send (" + this.getFiatPrefix() + formatMoney(fiatValue) + ")");
+        });
+
     },
     "prepareReset": function ()
     {
-        setMsg("Are you sure you want to generate a new address? <strong>This will delete your current one and all funds associated with it.</strong> <br/><button id='confirmReset'>Yes</button> <button id='noReset'>No</button>");
+        setMsg("Are you sure you want to reset your Plug In Key? <strong>This will require you to enter your valid Plug In Key again when you want to send from this Plug In.</strong> <br/><button id='confirmReset'>Yes</button> <button id='noReset'>No</button>");
     },
     "reset": function ()
     {
@@ -207,46 +214,6 @@ rush = window.rush = {
         this.address = "";
         this.balance = "";
     },
-    // "removePassword": function ()
-    // {
-    //     setMsg("Enter your password to disable it. <input type='password' id='passwordTxt' placeholder='password'> <button id='confirmRemovePassword'>Remove Password</button>");
-    // },
-    // "confirmRemovePassword": function ()
-    // {
-    //     var decrypted = CryptoJS.AES.decrypt(this.passcode, "" + $("#passwordTxt").val() );
-
-    //     var passcode = decrypted.toString(CryptoJS.enc.Utf8);
-
-    //     if (!passcode)
-    //     {
-    //         setMsg("Incorrect Password!");
-    //         return;
-    //     }
-
-    //     this.password = passcode;
-
-    //     this.encrypted = false;
-
-    //     chrome.storage.local.set(
-    //     {
-    //         'code': passcode,
-    //         'encrypted': false
-    //     }, function ()
-    //     {
-    //         setMsg("Password has been removed succesfully!");
-
-    //         $("#password").hide();
-    //         $("#removePassword").hide();
-    //         $("#preparePassword").show();
-    //     });
-
-
-    // },
-    // "preparePassword": function ()
-    // {
-    //     setMsg("Please set a password below: <br/><input type='password' id='setPassword' placeholder='password'> <input type='password' id='setPassword2' placeholder='repeat password'> <button id='setPasswordBtn'>Set Password</button>");
-    //     $("#setPassword").focus();
-    // },
     "setKey": function ()
     {
         key = $('#txtKey').val();
@@ -260,11 +227,9 @@ rush = window.rush = {
             type: "GET",
             url: url,
             async: true,
-            data:
-            {}
+            data: {}
 
-        }).done(function (msg)
-        {
+        }).done(function (msg) {
             var info = jQuery.parseJSON(msg);
 
             // save wallet address

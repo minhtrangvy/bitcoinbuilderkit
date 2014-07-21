@@ -166,7 +166,7 @@ window.onload = function ()
 
   $(document).on("keyup", '#txtAmount', function (event)
   {
-    rush.amountFiatValue($(this).val());
+    rush.amountFiatValue();
   });
 
   chrome.windows.getCurrent(function (currentWindow)
