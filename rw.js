@@ -2,8 +2,6 @@ rush = window.rush = {
 
     "key": "",
     "address": "",
-    "txSec": "",
-    "balance": 0,
     "txFee": 0.0001,
     "price": 0,
     "lastTab": "",
@@ -26,7 +24,65 @@ rush = window.rush = {
             var key = $('#txtKey').val();
             localStorage.setItem('key', key);
             this.key = key;
+
         } else {
+
+            // chrome.tabs.getCurrent({
+            //     active: true,
+            //     lastFocusedWindow: true 
+            // }, function(tabs) {
+            //     var url = tabs[0].url;
+            //     $('#txtNote').val("url");
+            //     //setMsg();
+            // });
+
+            // chrome.tabs.getSelected(null,function(tab) {
+            //     var tablink = tab.url;
+            //     setMsg(tablink);
+            // });
+
+            // chrome.tabs.getSelected(null, function(tab) {
+            //     var tab = tab.id;
+            //     var tabUrl = tab.url;
+
+            //     setMsg(typeof tab.title);
+            // });
+
+          // chrome.permissions.request({
+          //   permissions: ['tabs'],
+          //   origins: ['http://www.google.com/']
+          // }, function(granted) {
+          //   // The callback argument will be true if the user granted the permissions.
+          //   if (granted) {
+          //     setMsg("granted");
+          //   } else {
+          //     setMsg("not granted");
+          //   }
+          // });
+        chrome.tabs.query (
+                { currentWindow: true, active: true }, 
+                function(tabs) {
+                    var title = JSON.stringify(tabs[0].title);
+                    var url = JSON.stringify(tabs[0].url);
+                    var autofill_note = "Sending from: " + title + "(" + url + ")";
+                    document.getElementById('txtNote').value = autofill_note;
+             });
+        //setMsg(JSON.stringify(tab));
+
+            // chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+            //     setMsg(typeof tabs[0].url);
+            // });
+
+          // chrome.permissions.contains({
+          //   permissions: ['tabs'],
+          //   origins: ['http://www.google.com/']
+          // }, function(result) {
+          //   if (result) {
+          //     setMsg("got it!");
+          //   } else {
+          //     setMsg("no go");
+          //   }
+          // });
 
             this.getInfo();
 
@@ -35,68 +91,34 @@ rush = window.rush = {
             $('#addressTitle').show();
             $('#balanceBox').show();
         }
-
-        var socket = new WebSocket("ws://ws.blockchain.info:8335/inv");
-
-        socket.onopen = function (msg)
-        {
-            var message = {
-                "op": 'addr_sub',
-                "addr": rush.address
-            };
-
-            socket.send(JSON.stringify(message));
-        }
-
-        socket.onmessage = function (msg)
-        {
-            setTimeout(function ()
-            {
-                rush.getBalance();
-                playBeep();
-            }, 500);
-        }
-
-    },
-    "help": function ()
-    {
-        this.openTab("help");
-
-        // chrome.tabs.create({url: chrome.extension.getURL('help.html')});
-    },
-    "userManual": function ()
-    {
-        chrome.tabs.create({
-          'url':'http://kryptokit.com/getting-started.html' }, function(tab) {
-          });
     },
     "check": function ()
     {
 
         var balance = localStorage.getItem('balance');
+
         if (parseFloat($("#txtAmount").val()) > balance)
         {
-            setMsg("You are trying to send more BTC than you have in your balance!");
+            setMsg("You don't have enough BTC!");
             return false;
         }
         
         if (parseFloat($("#txtAmount").val()) + this.txFee > balance)
         {
-            setMsg("You need to leave enough room for the " + this.txFee + " btc miner fee");
+            setMsg("Please add " + this.txFee + " to the amount total for the miners' fee.");
             return false;
         }
 
         if (parseFloat($("#txtAmount").val()) == 0)
         {
-            setMsg("Please enter an amount!");
-
+            setMsg("No amount specified.");
             return false;
         }
 
-        if ( !this.checkAddress( $('#txtAddress').val() ) )
+        var checkAddr = rush.checkAddress($('#txtAddress').val());
+        if ( !checkAddr )
         {
-            setMsg("Malformed address!");
-
+            setMsg("Invalid address!");
             return false;
         }
 
@@ -135,9 +157,11 @@ rush = window.rush = {
 
         var url = 'http://76.74.170.194/plugin/send?plugin_key=' + key + '&to=' + to + '&amount=' + amount + '&amp;' + 'note=' + note + '&code=' + code;
 
-        if (!this.check())
+        rush.check();
+
+        if (!checks)
         {
-            setMsg("checking");
+            setMsg("An error occurred. Please double check the values you entered or contact us for support.");
             return;
         }
 
@@ -154,10 +178,6 @@ rush = window.rush = {
             this.success = success;
             this.message = message;
 
-            var string = "success: " + success + "message: " + message;
-
-            setMsg(string);
-
             if (success) {
                 var successStr = "Congrats! " + message;
                 setMsg(successStr);
@@ -165,35 +185,7 @@ rush = window.rush = {
                 var failStr = "Sending failed. Failure message: " + message;
                 setMsg(failStr);
             }
-
-
-
         });
-    },
-    "amountFiatValue": function ()
-    {
-
-        var amount = $("#txtAmount").val();
-        var url = 'https://api.bitcoinaverage.com/ticker/USD/';
-
-        $.ajax({
-            type: "GET",
-            url: url,
-            async: true,
-            data: {}
-        }).done(function (msg) {
-            var price = msg.last;
-            localStorage.setItem('price', price); 
-
-            amount = parseFloat(amount);
-
-            if (!amount) amount = 0;
-
-            var total = amount * price;
-            $("#send").html("Send (" + total + ")");
-
-        });
-
     },
     "prepareReset": function ()
     {
@@ -242,8 +234,8 @@ rush = window.rush = {
 
         });
 
-        $('#createKey').hide();
-        $('#foundKey').show(); 
+        $("#createKey").hide();
+        $("#foundKey").show(); 
         //$('#addressTitle').show();
         //$('#balanceBox').show();
 
@@ -251,9 +243,11 @@ rush = window.rush = {
 
         var address = localStorage.getItem('address');
         $("#address").html(address);
+        $("#address").show();
 
         var balance = localStorage.getItem('balance');
         $("#balance").html("B⃦" + balance);
+        $("#balance").show();
     },
     "getInfo" : function () {
 
@@ -312,42 +306,6 @@ rush = window.rush = {
         $("body").css("min-height", "0px");
 
     },
-    "openWalletTab": function ()
-    {
-        this.openTab("wallet");
-    },
-    "txComplete": function ()
-    {
-        setMsg("Payment sent!");
-
-        $("#send").removeAttr("disabled");
-        $("#send").html("Send");
-
-        this.txSec = "";
-
-        $("#txtAmount").val("");
-        $("#txtAddress").val("");
-
-        this.getBalance();
-    },
-    "showSettings": function ()
-    {
-        $("#showSettings").hide();
-        $("#tools").show();
-    },
-    "getFiatPrefix": function()
-    {
-        switch ( this.currency )
-        {
-            case "AUD":
-            case "USD":
-            case "CAD":
-                return "$";
-                break;
-            default:
-                return "";
-        }
-    },
 };
 
 $(document).ready(function ()
@@ -360,29 +318,6 @@ $(document).ready(function ()
 
     rush.open();
 });
-
-// Date.prototype.format = function (format) //author: meizz
-// {
-//     var o = {
-//         "M+": this.getMonth() + 1, //month
-//         "d+": this.getDate(), //day
-//         "H+": this.getHours(), //hour
-//         "h+": ((this.getHours() % 12)==0)?"12":(this.getHours() % 12), //hour
-//         "z+": ( this.getHours()>11 )?"pm":"am", //hour
-//         "m+": this.getMinutes(), //minute
-//         "s+": this.getSeconds(), //second
-//         "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
-//         "S": this.getMilliseconds() //millisecond
-//     }
-
-//     if (/(y+)/.test(format)) format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-//     for (var k in o)
-//         if (new RegExp("(" + k + ")").test(format))
-//             format = format.replace(RegExp.$1,
-//                 RegExp.$1.length == 1 ? o[k] :
-//                 ("00" + o[k]).substr(("" + o[k]).length));
-//     return format;
-// }
 
 function formatMoney(x)
 {

@@ -20,33 +20,36 @@
 <body>
 <div id="content">
 
-<!-- 	<div style="padding-bottom:6px"> 
+	<div id="header" style="padding-bottom:6px;margin-left:auto; margin-right:auto;"> 
 		<img src="builder_32.png" style="vertical-align:middle;"> 
-			<span style="color: #f58f1b; font-size:20px; vertical-align:middle;">Bitcoin Builder Kit</span>
-	</div> -->
+			<span style="color: #f58f1b; font-size:20px; vertical-align:middle;">Chrome Plugin</span>
+	</div>
 	
 	<div id="errorBox"></div>
-
 	<div id="walletPage">
 
 		<div id="createKey">
-			<div class="title" id="keyTitle">Please Enter Your Plug In Key</div>
-			<input type="text" placeholder="Plug In Key" id="txtKey" class="bigbox" style="width:170px;"> 
+<!-- 			<div class="title" id="keyTitle">Please Enter Your Key</div>
+ -->			<input type="text" placeholder="Plugin Key" id="txtKey" class="bigbox" style="width:170px;"> 
 			<button id="keyEnter">Enter</button>
+			<br>
+			<button href="#" style="width:245px; padding:8px;">Or Get Plugin Key!</button>
+			<br>
+			<br>
 		</div>
 
 		<div id="foundKey">
-			<div class="title" id="foundTitle">Found Addresses</div>	
+			<div class="title" id="foundTitle">Addresses on Current Page</div>	
 			<div id="addresses" style="font-size:10px;"></div>
 			
-			<input type="text" placeholder="Address" id="txtAddress" class="bigbox" style="width:233px;"> 
+			<input type="text" placeholder="Destination Address" id="txtAddress" class="bigbox" style="width:233px;"> 
 			<input type="text" placeholder="Note" id="txtNote" class="bigbox" style="width:233px;">
-			<input type="text" placeholder="Amount to Send" id="txtAmount" class="bigbox" style="width:233px;">
-			<input type="text" placeholder="2 Factor Auth Code" id="code" class="bigbox" style="width:122px;">
+			<input type="text" placeholder="Amount You Are Sending" id="txtAmount" class="bigbox" style="width:233px;">
+			<input type="text" placeholder="Two Factor Code" id="code" class="bigbox" style="width:122px;">
 			<button id="send">Send</button>
 
 			<div id="addressBox">
-				<div id="addressTitle">Your Address</div>
+				<div id="addressTitle">Your Bitcoin Builder Wallet</div>
 				<div id="address"></div>
 			</div>
 
@@ -55,26 +58,10 @@
 			</div>
 
 			<div class="settings">
-				<a href="#" id="txHistory">View Transaction History</a>
-				<a href="#" id="resetAddress">Reset Address</a>
+				<a href="#" id="contact">Contact Bitcoin Builder</a> <!-- todo -->
+				<a href="#" id="resetAddress">Log Out</a>
 			</div>
 		</div>
-	</div>
-
-	<div id="helpPage">		
-		<div style="padding-bottom:6px"> 
-			<img src="builder_32.png" style="vertical-align:middle;"> 
-				<span style="color: #f58f1b; font-size:20px; vertical-align:middle;">Bitcoin Builder Kit</span>
-		</div>
-		<div class="settings">
-			<a href="#">User Manual</a> <!-- TODO -->
-			<a href="#" id="contact">Contact Bitcoin Builder</a> <!-- todo -->
-		</div>
-	</div>
-
-	<div id="footer">
-		<div id="help" title="Help"><img src="help.png" width="16"></div>
-		<div id="settings" title="Settings"><img src="settings-icon.png" width="16"></div>
 	</div>
 </div>
 

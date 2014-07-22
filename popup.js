@@ -102,22 +102,9 @@ window.onload = function ()
     rush.reset();
   });
 
-  $(document).on("click", '#showSettings', function (event)
-  {
-    rush.showSettings();
-  });
-
   $(document).on("click", '#noReset', function (event)
   {
     $("#errorBox").hide();
-  });
-
-  $(document).on("click", '#txHistory', function (event)
-  {
-    chrome.tabs.create(
-    {
-      url: "https://blockchain.info/address/" + rush.address
-    });
   });
 
   $(document).on("click", '#addresses input', function (event)
@@ -129,44 +116,6 @@ window.onload = function ()
       $("#txtAmount").val( $(this).attr("amount") );
       rush.amountFiatValue( $(this).attr("amount") );
     }      
-
-  });
-
-  $(document).on("click", '#contact', function (event)
-  {
-    chrome.tabs.create({ url: "mailto:support@kryptokit.com" });
-  });
-
-  $(document).on("click", '#help', function (event)
-  {
-    rush.help();
-  });
-
-  $(document).on("click", '#userManual', function (event)
-  {
-    rush.userManual();
-  });
-
-  $(document).on("dblclick", '.address', function (event)
-  {
-    chrome.tabs.create({
-      'url': "https://blockchain.info/address/" + $(this).attr("address") }, function(tab) {
-      });
-  });
-
-  $(document).on("click", '#settings', function (event)
-  {
-    rush.openTab("settings");
-  });  
-
-  $(document).on("click", '#walletTab', function (event)
-  {
-    rush.openWalletTab();
-  });
-
-  $(document).on("keyup", '#txtAmount', function (event)
-  {
-    rush.amountFiatValue();
   });
 
   chrome.windows.getCurrent(function (currentWindow)
