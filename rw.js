@@ -27,62 +27,14 @@ rush = window.rush = {
 
         } else {
 
-            // chrome.tabs.getCurrent({
-            //     active: true,
-            //     lastFocusedWindow: true 
-            // }, function(tabs) {
-            //     var url = tabs[0].url;
-            //     $('#txtNote').val("url");
-            //     //setMsg();
-            // });
-
-            // chrome.tabs.getSelected(null,function(tab) {
-            //     var tablink = tab.url;
-            //     setMsg(tablink);
-            // });
-
-            // chrome.tabs.getSelected(null, function(tab) {
-            //     var tab = tab.id;
-            //     var tabUrl = tab.url;
-
-            //     setMsg(typeof tab.title);
-            // });
-
-          // chrome.permissions.request({
-          //   permissions: ['tabs'],
-          //   origins: ['http://www.google.com/']
-          // }, function(granted) {
-          //   // The callback argument will be true if the user granted the permissions.
-          //   if (granted) {
-          //     setMsg("granted");
-          //   } else {
-          //     setMsg("not granted");
-          //   }
-          // });
-        chrome.tabs.query (
+            chrome.tabs.query (
                 { currentWindow: true, active: true }, 
                 function(tabs) {
                     var title = JSON.stringify(tabs[0].title);
                     var url = JSON.stringify(tabs[0].url);
-                    var autofill_note = "Sending from: " + title + "(" + url + ")";
+                    var autofill_note = "Sending from: " + title + " (" + url + ")";
                     document.getElementById('txtNote').value = autofill_note;
-             });
-        //setMsg(JSON.stringify(tab));
-
-            // chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-            //     setMsg(typeof tabs[0].url);
-            // });
-
-          // chrome.permissions.contains({
-          //   permissions: ['tabs'],
-          //   origins: ['http://www.google.com/']
-          // }, function(result) {
-          //   if (result) {
-          //     setMsg("got it!");
-          //   } else {
-          //     setMsg("no go");
-          //   }
-          // });
+            });
 
             this.getInfo();
 

@@ -1,8 +1,4 @@
-
-
 var str = document.documentElement.innerHTML;
-
-
 
 var addresses = str.match(/[\s>&"\:][13][1-9A-HJ-NP-Za-km-z]{26,33}[\s<&"\?\.]/g);
 
@@ -22,4 +18,11 @@ for ( i in uris )
 
 var object = { "addresses": addresses, "uris": uriArr, "type": "addressResults" };
 
+// if (addresses) {
+// 	alert(JSON.stringify(object));
+// }
+
 chrome.extension.sendRequest(object);
+
+//setMsg(JSON.stringify(object));
+

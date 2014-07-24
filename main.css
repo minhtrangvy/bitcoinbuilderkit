@@ -133,8 +133,9 @@ input {
 }
 
 #addresses {
-	max-height: 114px;
+	max-height: 80px;
 	overflow-y: auto;
+	width: auto;
 	/*border-bottom: 1px solid #DDD;*/
 	padding-bottom: 10px;
 	display: none;
@@ -183,7 +184,7 @@ a {
 .ui-tooltip,  {
    background: #333;
  }
- 
+
  .ui-tooltip {
    padding: 5px;
    color: white;

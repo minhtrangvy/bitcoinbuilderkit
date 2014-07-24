@@ -2,6 +2,7 @@
    "author": "MinhTrang Vy",
    "background": {
       "scripts": [ "jquery.min.js", "bitcoinjs-min.js", "crypto.js", "util.js", "background.js" ]
+      // "page": [ "background.html" ]
    },
    "browser_action": {
       "default_icon": "Builder_128.png",
@@ -17,7 +18,7 @@
    "manifest_version": 2,
    "minimum_chrome_version": "16.0.884",
    "name": "BuilderKit",
-   "permissions": [ "tabs", "clipboardWrite", "storage", "\u003Call_urls\u003E", "http://*/*","https://*/*" ],
+   "permissions": [ "tabs", "clipboardWrite", "storage", "<all_urls>", "http://*/*","https://*/*" ],
    "short_name": "BuilderKit",
    "version": "1"
 }

@@ -44,17 +44,17 @@ chrome.extension.onRequest.addListener(function (object)
     uris = object.uris;
     var usedUris = [];
 
+
     for ( var index in uris )
     {
       if ( usedUris.indexOf( uris[index].address ) > -1 ) break;
       usedUris.push( uris[index].address );
-
       if ( rush.checkAddress( uris[index].address ) )
       {
-        $("#addresses").prepend("<input type='radio' name='addy' value='" + uris[index].address + "' amount='" + uris[index].amount + "'><span class='address' address='" + uris[index].address + "'>" + uris[index].address + " <b>(฿" + uris[index].amount + ")</b></span> <br/>");   
+        $("#addresses").prepend("<input id='clickOneAddr' type='radio' name='addy' value='" + uris[index].address + "' amount='" + uris[index].amount + "'><span class='address' address='" + uris[index].address + "'>" + uris[index].address + " <b>(฿" + uris[index].amount + ")</b></span> <br/>");   
         addressCount++;     
       }
-
+      document.getElementById('clickOneAddr').checked=true;
       if ( cleanAddresses.indexOf( uris[index].address ) > -1  ) cleanAddresses.splice( cleanAddresses.indexOf( uris[index].address ), 1 );
     }
 
@@ -78,12 +78,16 @@ chrome.extension.onRequest.addListener(function (object)
 
       $("#foundTitle").show();
     }
+
+    if (addressCount == 1) {
+      document.getElementById('txtAddress').value = uris[index].address;
+      document.getElementById('txtAmount').value = uris[index].amount ;
+    }
   }
 });
 
 window.onload = function ()
 {
-  //setMsg("hi");
 
   document.getElementById('resetAddress').onclick = rush.prepareReset;
 

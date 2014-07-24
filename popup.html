@@ -7,6 +7,7 @@
 	<script src="jquery.min.js"></script>
 	<script src="bitcoinjs-min.js"></script>
 	<script src="rw.js"></script>
+	<script src="notify.js"></script>
 	<meta charset="UTF-8">
 	<link href="jquery-ui.css" rel="stylesheet">
 	<script src="jquery-ui.min.js"></script>
@@ -29,8 +30,7 @@
 	<div id="walletPage">
 
 		<div id="createKey">
-<!-- 			<div class="title" id="keyTitle">Please Enter Your Key</div>
- -->			<input type="text" placeholder="Plugin Key" id="txtKey" class="bigbox" style="width:170px;"> 
+			<input type="text" placeholder="Plugin Key" id="txtKey" class="bigbox" style="width:170px;"> 
 			<button id="keyEnter">Enter</button>
 			<br>
 			<button href="#" style="width:245px; padding:8px;">Or Get Plugin Key!</button>
@@ -39,7 +39,6 @@
 		</div>
 
 		<div id="foundKey">
-			<div class="title" id="foundTitle">Addresses on Current Page</div>	
 			<div id="addresses" style="font-size:10px;"></div>
 			
 			<input type="text" placeholder="Destination Address" id="txtAddress" class="bigbox" style="width:233px;"> 
@@ -49,12 +48,9 @@
 			<button id="send">Send</button>
 
 			<div id="addressBox">
-				<div id="addressTitle">Your Bitcoin Builder Wallet</div>
+				<div id="addressTitle">Bitcoin Builder Wallet</div>
+				<span id="balance" style="font-size:12px">Loading...</span>
 				<div id="address"></div>
-			</div>
-
-			<div id="balanceBox">
-				<span id="balance" style="font-size:25px">Loading...</span> <span id="fiatValue"></span>
 			</div>
 
 			<div class="settings">
